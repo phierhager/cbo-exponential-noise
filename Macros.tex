@@ -1,0 +1,831 @@
+%======================================================================
+% MACROS
+% ======================================================================
+\providecommand*{\Covv}[1]{\operatorname{Cov}\left({#1}\right)}   % distance
+\providecommand*{\textCovv}[1]{\operatorname{Cov}({#1})}   % distance
+
+\providecommand*{\Covvn}[2]{\operatorname{Cov}_{#2}\left({#1}\right)}   % distance
+\providecommand*{\Var}[1]{\operatorname{Var}\left({#1}\right)}   % distance
+\providecommand*{\textVar}[1]{\operatorname{Var}({#1})}   % distance
+
+\providecommand*{\Uni}[1]{\operatorname{Uni}({#1})}
+\providecommand*{\Span}{\operatorname{span}}     % Span
+
+% distance
+\providecommand*{\len}[1]{\operatorname{length}({#1})}   % distance
+\providecommand{\subG}{\operatorname{subG}}
+\providecommand*{\seqInt}[2]{[{#1}:{#2}]}   %
+% Operators
+
+\providecommand{\Bdsymb}{\Gamma}                   % Tag for boundary operators
+\providecommand{\Div}{\operatorname{div}}          % Divergence
+\providecommand{\bDiv}{{\Div}_{\Bdsymb}}           % Surface divergence
+\providecommand{\mDiv}{\operatorname{\sf div}}     % matrix divergence
+\providecommand{\curl}{\operatorname{{\bf curl}}}  % Standard curl operator
+\providecommand{\plcurl}{\operatorname{{\bf curl}}_{2D}} % Vectorial curl operator in 2D
+\providecommand{\bcurl}{{\curl}_{\Bdsymb}}         % vectorial curl on the surface
+\providecommand{\bscurl}{\operatorname{curl}_{\Bdsymb}} % scalar curl on a surface
+\providecommand{\scurl}{\operatorname{curl}_{2D}}       % scalar curl in 2D
+\providecommand{\mcurl}{\operatorname{{\bf\sf curl}}}   % matrix curl operator
+\providecommand{\grad}{\operatorname{{\bf grad}}}       % standard gradient
+\providecommand{\bgrad}{\grad_{\Bdsymb}}                % Surface gradient
+\providecommand{\mgrad}{\operatorname{{\bf\sf grad}}}   % Matrix gradient for row vectors
+
+\providecommand{\Dim}{\operatorname{dim}}            % dimension
+\providecommand{\dim}{\Dim}
+\providecommand{\Card}{\sharp}                       % numel of a set (cardinality)
+\providecommand{\Vol}{\operatorname{Vol}}   % volume
+\providecommand{\vol}{\Vol}
+\providecommand{\ker}{\operatorname{ker}}
+\providecommand{\ran}{\operatorname{ran}}
+\providecommand*{\Meas}[2][]{\operatorname{meas}_{#1}({#2})} % measure
+\providecommand*{\meas}[2][]{\Meas{#1}{#2}}
+\providecommand*{\dist}[2]{\operatorname{dist}({#1};{#2})}   % distance
+\providecommand*{\normaldist}[2]{\operatorname{ndist}({#1};{#2})}   % distance
+\providecommand*{\Dist}[2]{\dist{#1}{#2}}
+\providecommand{\Det}{\operatorname{det}}                    % determinant
+\providecommand{\Sgn}{\operatorname{sgn}}                    % sign
+\providecommand*{\Kern}[1]{{\rm Ker}({#1})}                  % Kernel
+\providecommand*{\Dom}[1]{{\rm Dom}({#1})}                   % Domain
+\providecommand*{\Span}[1]{\operatorname{Span}\left\{{#1}\right\}}     % Span
+\providecommand*{\Convex}[1]{\operatorname{convex}\left\{{#1}\right\}} % convex hull
+\providecommand{\Supp}{\operatorname{supp}}                            % support
+\providecommand{\supp}{\Supp}
+\providecommand{\WF}{\operatorname{WF}}                            % wavefront se
+
+%\providecommand{\dist}{\operatorname{dist}}                        % rank
+
+\providecommand{\sing}{\operatorname{sing}}                            % support
+\providecommand*{\Image}[1]{\mathrm{Im}({#1})}                         % Image
+\providecommand*{\Range}[1]{\operatorname{Range}({#1})}                % Range
+\providecommand{\range}{\operatorname{range}}                % Range
+\providecommand{\rank}{\operatorname{rank}}                        % rank
+\providecommand{\Rank}{\rank}
+\renewcommand{\Re}{\operatorname{Re}}             % real part
+\renewcommand{\Im}{\operatorname{Im}}             % imaginary part
+\providecommand{\argmin}{\operatorname*{\arg\min}}  % argument yielding inf
+\providecommand{\arginf}{\operatorname*{arginf}}  % argument yielding inf
+\providecommand{\argmax}{\operatorname*{argmax}}  % argument yielding max
+\providecommand{\nnz}{\operatorname{nnz}}         % no of nonzeros
+\providecommand{\Id}{\Op{Id}}                     % Identity operator
+\providecommand{\diam}{\operatorname{diam}}
+\providecommand{\diag}{\operatorname{diag}}
+\providecommand{\Diag}[1]{\operatorname{Diag}\left({#1}\right)}
+\providecommand{\esssup}{\operatorname*{esssup}}
+\providecommand{\essinf}{\operatorname*{essinf}}
+\providecommand{\limsup}{\operatorname*{limsup}}
+\providecommand{\closed}[1]{\operatorname*{cl}\left({#1}\right)}
+
+
+% Bold small letters (for vectors)
+
+\newcommand{\Va}{{\mathbf{a}}}
+\newcommand{\Vb}{{\mathbf{b}}}
+\newcommand{\Vc}{{\mathbf{c}}}
+\newcommand{\Vd}{{\mathbf{d}}}
+\newcommand{\Ve}{{\mathbf{e}}}
+\newcommand{\Vf}{{\mathbf{f}}}
+\newcommand{\Vg}{{\mathbf{g}}}
+\newcommand{\Vh}{{\mathbf{h}}}
+\newcommand{\Vi}{{\mathbf{i}}}
+\newcommand{\Vj}{{\mathbf{j}}}
+\newcommand{\Vk}{{\mathbf{k}}}
+\newcommand{\Vl}{{\mathbf{l}}}
+\newcommand{\Vm}{{\mathbf{m}}}
+\newcommand{\Vn}{{\mathbf{n}}}
+\newcommand{\Vo}{{\mathbf{o}}}
+\newcommand{\Vp}{{\mathbf{p}}}
+\newcommand{\Vq}{{\mathbf{q}}}
+\newcommand{\Vr}{{\mathbf{r}}}
+\newcommand{\Vs}{{\mathbf{s}}}
+\newcommand{\Vt}{{\mathbf{t}}}
+\newcommand{\Vu}{{\mathbf{u}}}
+\newcommand{\Vv}{{\mathbf{v}}}
+\newcommand{\Vw}{{\mathbf{w}}}
+\newcommand{\Vx}{{\mathbf{x}}}
+\newcommand{\Vy}{{\mathbf{y}}}
+\newcommand{\Vz}{{\mathbf{z}}}
+
+% Small bold math characters
+
+\providecommand{\Ba}{{\boldsymbol{a}}}
+\providecommand{\Bb}{{\boldsymbol{b}}}
+\providecommand{\Bc}{{\boldsymbol{c}}}
+\providecommand{\Bd}{{\boldsymbol{d}}}
+\providecommand{\Be}{{\boldsymbol{e}}}
+\providecommand{\Bf}{{\boldsymbol{f}}}
+\providecommand{\Bg}{{\boldsymbol{g}}}
+\providecommand{\Bh}{{\boldsymbol{h}}}
+\providecommand{\Bi}{{\boldsymbol{i}}}
+\providecommand{\Bj}{{\boldsymbol{j}}}
+\providecommand{\Bk}{{\boldsymbol{k}}}
+\providecommand{\Bl}{{\boldsymbol{l}}}
+\providecommand{\Bm}{{\boldsymbol{m}}}
+\providecommand{\Bn}{{\boldsymbol{n}}}
+\providecommand{\Bo}{{\boldsymbol{o}}}
+\providecommand{\Bp}{{\boldsymbol{p}}}
+\providecommand{\Bq}{{\boldsymbol{q}}}
+\providecommand{\Br}{{\boldsymbol{r}}}
+\providecommand{\Bs}{{\boldsymbol{s}}}
+\providecommand{\Bt}{{\boldsymbol{t}}}
+\providecommand{\Bu}{{\boldsymbol{u}}}
+\providecommand{\Bv}{{\boldsymbol{v}}}
+\providecommand{\Bw}{{\boldsymbol{w}}}
+\providecommand{\Bx}{{\boldsymbol{x}}}
+\providecommand{\By}{{\boldsymbol{y}}}
+\providecommand{\Bz}{{\boldsymbol{z}}}
+
+% Capital bold Characters
+
+\newcommand{\VA}{{\mathbf{A}}}
+\newcommand{\VB}{{\mathbf{B}}}
+\newcommand{\VC}{{\mathbf{C}}}
+\newcommand{\VD}{{\mathbf{D}}}
+\newcommand{\VE}{{\mathbf{E}}}
+\newcommand{\VF}{{\mathbf{F}}}
+\newcommand{\VG}{{\mathbf{G}}}
+\newcommand{\VH}{{\mathbf{H}}}
+\newcommand{\VI}{{\mathbf{I}}}
+\newcommand{\VJ}{{\mathbf{J}}}
+\newcommand{\VK}{{\mathbf{K}}}
+\newcommand{\VL}{{\mathbf{L}}}
+\newcommand{\VM}{{\mathbf{M}}}
+\newcommand{\VN}{{\mathbf{N}}}
+\newcommand{\VO}{{\mathbf{O}}}
+\newcommand{\VP}{{\mathbf{P}}}
+\newcommand{\VQ}{{\mathbf{Q}}}
+\newcommand{\VR}{{\mathbf{R}}}
+\newcommand{\VS}{{\mathbf{S}}}
+\newcommand{\VT}{{\mathbf{T}}}
+\newcommand{\VU}{{\mathbf{U}}}
+\newcommand{\VV}{{\mathbf{V}}}
+\newcommand{\VW}{{\mathbf{W}}}
+\newcommand{\VX}{{\mathbf{X}}}
+\newcommand{\VY}{{\mathbf{Y}}}
+\newcommand{\VZ}{{\mathbf{Z}}}
+
+% Capital bold characters in math mode
+
+\providecommand{\BA}{{\boldsymbol{A}}}
+\providecommand{\BB}{{\boldsymbol{B}}}
+\providecommand{\BC}{{\boldsymbol{C}}}
+\providecommand{\BD}{{\boldsymbol{D}}}
+\providecommand{\BE}{{\boldsymbol{E}}}
+\providecommand{\BF}{{\boldsymbol{F}}}
+\providecommand{\BG}{{\boldsymbol{G}}}
+\providecommand{\BH}{{\boldsymbol{H}}}
+\providecommand{\BI}{{\boldsymbol{I}}}
+\providecommand{\BJ}{{\boldsymbol{J}}}
+\providecommand{\BK}{{\boldsymbol{K}}}
+\providecommand{\BL}{{\boldsymbol{L}}}
+\providecommand{\BM}{{\boldsymbol{M}}}
+\providecommand{\BN}{{\boldsymbol{N}}}
+\providecommand{\BO}{{\boldsymbol{O}}}
+\providecommand{\BP}{{\boldsymbol{P}}}
+\providecommand{\BQ}{{\boldsymbol{Q}}}
+\providecommand{\BR}{{\boldsymbol{R}}}
+\providecommand{\BS}{{\boldsymbol{S}}}
+\providecommand{\BT}{{\boldsymbol{T}}}
+\providecommand{\BU}{{\boldsymbol{U}}}
+\providecommand{\BV}{{\boldsymbol{V}}}
+\providecommand{\BW}{{\boldsymbol{W}}}
+\providecommand{\BX}{{\boldsymbol{X}}}
+\providecommand{\BY}{{\boldsymbol{Y}}}
+\providecommand{\BZ}{{\boldsymbol{Z}}}
+
+\newcommand{\nablabf}{\boldsymbol{\nabla}}
+\newcommand{\alphabf}{\boldsymbol{\alpha}}
+\newcommand{\betabf}{\boldsymbol{\beta}}
+\newcommand{\gammabf}{\boldsymbol{\gamma}}
+\newcommand{\deltabf}{\boldsymbol{\delta}}
+\newcommand{\epsilonbf}{\boldsymbol{\epsilon}}
+\newcommand{\varepsilonbf}{\boldsymbol{\varepsilon}}
+\newcommand{\zetabf}{\boldsymbol{\zeta}}
+\newcommand{\etabf}{\boldsymbol{\eta}}
+\newcommand{\thetabf}{\boldsymbol{\theta}}
+\newcommand{\varthetabf}{\boldsymbol{\vartheta}}
+\newcommand{\iotabf}{\boldsymbol{\iota}}
+\newcommand{\kappabf}{\boldsymbol{\kappa}}
+\newcommand{\lambdabf}{\boldsymbol{\lambda}}
+\newcommand{\mubf}{\boldsymbol{\mu}}
+\newcommand{\nubf}{\boldsymbol{\nu}}
+\newcommand{\xibf}{\boldsymbol{\xi}}
+\newcommand{\pibf}{\boldsymbol{\pi}}
+\newcommand{\varpibf}{\boldsymbol{\varpi}}
+\newcommand{\rhobf}{\boldsymbol{\rho}}
+\newcommand{\varrhobf}{\boldsymbol{\varrho}}
+\newcommand{\sigmabf}{\boldsymbol{\sigma}}
+\newcommand{\varsigmabf}{\boldsymbol{\varsigma}}
+\newcommand{\taubf}{\boldsymbol{\tau}}
+\newcommand{\upsilonbf}{\boldsymbol{\upsilon}}
+\newcommand{\phibf}{\boldsymbol{\phi}}
+\newcommand{\varphibf}{\boldsymbol{\varphi}}
+\newcommand{\chibf}{\boldsymbol{\chi}}
+\newcommand{\psibf}{\boldsymbol{\psi}}
+\newcommand{\omegabf}{\boldsymbol{\omega}}
+\newcommand{\Gammabf}{\boldsymbol{\Gamma}}
+\newcommand{\Deltabf}{\boldsymbol{\Delta}}
+\newcommand{\Thetabf}{\boldsymbol{\Theta}}
+\newcommand{\Lambdabf}{\boldsymbol{\Lambda}}
+\newcommand{\Xibf}{\boldsymbol{\Xi}}
+\newcommand{\Pibf}{\boldsymbol{\Pi}}
+\newcommand{\Psibf}{\boldsymbol{\Psi}}
+\newcommand{\Sigmabf}{\boldsymbol{\Sigma}}
+\newcommand{\Upsilonbf}{\boldsymbol{\Upsilon}}
+\newcommand{\Phibf}{\boldsymbol{\Phi}}
+\newcommand{\Omegabf}{\boldsymbol{\Omega}}
+
+% bold greek characters (math style)
+% Comment axelo: \alphabf,... is inconsistent \with \Ba!
+%                \Valpha,... and \Balpha added below
+%                Also, for capital Greek letters \mathbf and \boldsymbol is the same!
+
+% Bold upright capital greek letters for _V_ectors and Matrices
+\newcommand{\VGamma}  {\mathbf{\Gamma}}
+\newcommand{\VDelta}  {\mathbf{\Delta}}
+\newcommand{\VTheta}  {\mathbf{\Theta}}
+\newcommand{\VLambda} {\mathbf{\Lambda}}
+\newcommand{\VXi}     {\mathbf{\Xi}}
+\newcommand{\VPi}     {\mathbf{\Pi}}
+\newcommand{\VPsi}    {\mathbf{\Psi}}
+\newcommand{\VSigma}  {\mathbf{\Sigma}}
+\newcommand{\VUpsilon}{\mathbf{\Upsilon}}
+\newcommand{\VPhi}    {\mathbf{\Phi}}
+\newcommand{\VOmega}  {\mathbf{\Omega}}
+
+% _B_old italicized capital greek letters
+\newcommand{\BGamma}  {\boldsymbol{\mathit{\Gamma}}}
+\newcommand{\BDelta}  {\boldsymbol{\mathit{\Delta}}}
+\newcommand{\BTheta}  {\boldsymbol{\mathit{\Theta}}}
+\newcommand{\BLambda} {\boldsymbol{\mathit{\Lambda}}}
+\newcommand{\BXi}     {\boldsymbol{\mathit{\Xi}}}
+\newcommand{\BPi}     {\boldsymbol{\mathit{\Pi}}}
+\newcommand{\BPsi}    {\boldsymbol{\mathit{\Psi}}}
+\newcommand{\BSigma}  {\boldsymbol{\mathit{\Sigma}}}
+\newcommand{\BUpsilon}{\boldsymbol{\mathit{\Upsilon}}}
+\newcommand{\BPhi}    {\boldsymbol{\mathit{\Phi}}}
+\newcommand{\BOmega}  {\boldsymbol{\mathit{\Omega}}}
+
+% Bold upright lower case greek letters for _V_ectors and matrices (requires package upgreek)
+\newcommand{\Valpha}     {{\boldsymbol{\upalpha}}}
+\newcommand{\Vbeta}      {{\boldsymbol{\upbeta}}}
+\newcommand{\Vgamma}     {{\boldsymbol{\upgamma}}}
+\newcommand{\Vdelta}     {\boldsymbol{\updelta}}
+\newcommand{\Vepsilon}   {\boldsymbol{\upepsilon}}
+\newcommand{\Vvarepsilon}{\boldsymbol{\upvarepsilon}}
+\newcommand{\Vzeta}      {\boldsymbol{\upzeta}}
+\newcommand{\Veta}       {\boldsymbol{\upeta}} %
+\newcommand{\Vtheta}     {\boldsymbol{\uptheta}}
+\newcommand{\Vvartheta}  {\boldsymbol{\upvartheta}}
+\newcommand{\Viota}      {\boldsymbol{\upiota}}
+\newcommand{\Vkappa}     {\boldsymbol{\upkappa}}
+\newcommand{\Vlambda}    {\boldsymbol{\uplambda}}
+\newcommand{\Vmu}        {\boldsymbol{\upmu}}
+\newcommand{\Vnu}        {\boldsymbol{\upnu}}
+\newcommand{\Vxi}        {\boldsymbol{\upxi}}
+\newcommand{\Vpi}        {\boldsymbol{\uppi}}
+\newcommand{\Vvarpi}     {\boldsymbol{\upvarpi}}
+\newcommand{\Vrho}       {\boldsymbol{\uprho}}
+\newcommand{\Vvarrho}    {\boldsymbol{\upvarrho}}
+\newcommand{\Vsigma}     {\boldsymbol{\upsigma}}
+\newcommand{\Vvarsigma}  {\boldsymbol{\upvarsigma}}
+\newcommand{\Vtau}       {\boldsymbol{\uptau}}
+\newcommand{\Vupsilon}   {\boldsymbol{\upupsilon}}
+\newcommand{\Vphi}       {\boldsymbol{\upphi}}
+\newcommand{\Vvarphi}    {\boldsymbol{\upvarphi}}
+\newcommand{\Vchi}       {\boldsymbol{\upchi}}
+\newcommand{\Vpsi}       {\boldsymbol{\uppsi}}
+\newcommand{\Vomega}     {\boldsymbol{\upomega}}
+
+\newcommand{\Vzero}      {\boldsymbol{0}}
+\newcommand{\Vone}       {\boldsymbol{1}}
+
+% _B_old italicised lower case Greek letters
+\newcommand{\Balpha}     {\boldsymbol{\alpha}}
+\newcommand{\Bbeta}      {\boldsymbol{\beta}}
+\newcommand{\Bgamma}     {\boldsymbol{\gamma}}
+\newcommand{\Bdelta}     {\boldsymbol{\delta}}
+\newcommand{\Bepsilon}   {\boldsymbol{\epsilon}}
+\newcommand{\Bvarepsilon}{\boldsymbol{\varepsilon}}
+\newcommand{\Bzeta}      {\boldsymbol{\zeta}}
+\newcommand{\Beta}       {\boldsymbol{\eta}}                % \Beta=B undefined
+\newcommand{\Btheta}     {\boldsymbol{\theta}}
+\newcommand{\Bvartheta}  {\boldsymbol{\vartheta}}
+\newcommand{\Biota}      {\boldsymbol{\iota}}
+\newcommand{\Bkappa}     {\boldsymbol{\kappa}}
+\newcommand{\Blambda}    {\boldsymbol{\lambda}}
+\newcommand{\Bmu}        {\boldsymbol{\mu}}
+\newcommand{\Bnu}        {\boldsymbol{\nu}}
+\newcommand{\Bxi}        {\boldsymbol{\xi}}
+\newcommand{\Bpi}        {\boldsymbol{\pi}}
+\newcommand{\Bvarpi}     {\boldsymbol{\varpi}}
+\newcommand{\Brho}       {\boldsymbol{\rho}}
+\newcommand{\Bvarrho}    {\boldsymbol{\varrho}}
+\newcommand{\Bsigma}     {\boldsymbol{\sigma}}
+\newcommand{\Bvarsigma}  {\boldsymbol{\varsigma}}
+\newcommand{\Btau}       {\boldsymbol{\tau}}
+\newcommand{\Bupsilon}   {\boldsymbol{\upsilon}}
+\newcommand{\Bphi}       {\boldsymbol{\phi}}
+\newcommand{\Bvarphi}    {\boldsymbol{\phi}}
+\newcommand{\Bchi}       {\boldsymbol{\chi}}
+\newcommand{\Bpsi}       {\boldsymbol{\psi}}
+\newcommand{\Bomega}     {\boldsymbol{\omega}}
+
+% Roman capital letters (for matrices)
+
+\newcommand{\Amat}{{\rm A}}
+\newcommand{\Bmat}{{\rm B}}
+\newcommand{\Cmat}{{\rm C}}
+\newcommand{\Dmat}{{\rm D}}
+\newcommand{\Emat}{{\rm E}}
+\newcommand{\Fmat}{{\rm F}}
+\newcommand{\Gmat}{{\rm G}}
+\newcommand{\Hmat}{{\rm H}}
+\newcommand{\Imat}{{\rm I}}
+\newcommand{\Jmat}{{\rm J}}
+\newcommand{\Kmat}{{\rm K}}
+\newcommand{\Lmat}{{\rm L}}
+\newcommand{\Mmat}{{\rm M}}
+\newcommand{\Nmat}{{\rm N}}
+\newcommand{\Omat}{{\rm O}}
+\newcommand{\Pmat}{{\rm P}}
+\newcommand{\Qmat}{{\rm Q}}
+\newcommand{\Rmat}{{\rm R}}
+\newcommand{\Smat}{{\rm S}}
+\newcommand{\Tmat}{{\rm T}}
+\newcommand{\Umat}{{\rm U}}
+\newcommand{\Vmat}{{\rm V}}
+\newcommand{\Wmat}{{\rm W}}
+\newcommand{\Xmat}{{\rm X}}
+\newcommand{\Ymat}{{\rm Y}}
+\newcommand{\Zmat}{{\rm Z}}
+
+% Capital Sans serif letters in math mode
+
+\newcommand{\Asf}{\mathsf{A}}
+\newcommand{\Bsf}{\mathsf{B}}
+\newcommand{\Csf}{\mathsf{C}}
+\newcommand{\Dsf}{\mathsf{D}}
+\newcommand{\Esf}{\mathsf{E}}
+\newcommand{\Fsf}{\mathsf{F}}
+\newcommand{\Gsf}{\mathsf{G}}
+\newcommand{\Hsf}{\mathsf{H}}
+\newcommand{\Isf}{\mathsf{I}}
+\newcommand{\Jsf}{\mathsf{J}}
+\newcommand{\Ksf}{\mathsf{K}}
+\newcommand{\Lsf}{\mathsf{L}}
+\newcommand{\Msf}{\mathsf{M}}
+\newcommand{\Nsf}{\mathsf{N}}
+\newcommand{\Osf}{\mathsf{O}}
+\newcommand{\Psf}{\mathsf{P}}
+\newcommand{\Qsf}{\mathsf{Q}}
+\newcommand{\Rsf}{\mathsf{R}}
+\newcommand{\Ssf}{\mathsf{S}}
+\newcommand{\Tsf}{\mathsf{T}}
+\newcommand{\Usf}{\mathsf{U}}
+\newcommand{\Vsf}{\mathsf{V}}
+\newcommand{\Wsf}{\mathsf{W}}
+\newcommand{\Xsf}{\mathsf{X}}
+\newcommand{\Ysf}{\mathsf{Y}}
+\newcommand{\Zsf}{\mathsf{Z}}
+
+% Sans serif letters in math mode
+
+\newcommand{\asf}{\mathsf{a}}
+\newcommand{\bsf}{\mathsf{b}}
+\newcommand{\csf}{\mathsf{c}}
+\newcommand{\dsf}{\mathsf{d}}
+\newcommand{\esf}{\mathsf{e}}
+\newcommand{\fsf}{\mathsf{f}}
+\newcommand{\gsf}{\mathsf{g}}
+\newcommand{\hsf}{\mathsf{h}}
+\newcommand{\isf}{\mathsf{i}}
+\newcommand{\jsf}{\mathsf{j}}
+\newcommand{\ksf}{\mathsf{k}}
+\newcommand{\lsf}{\mathsf{l}}
+\newcommand{\msf}{\mathsf{m}}
+\newcommand{\nsf}{\mathsf{n}}
+\newcommand{\osf}{\mathsf{o}}
+\newcommand{\psf}{\mathsf{p}}
+\newcommand{\qsf}{\mathsf{q}}
+\newcommand{\rsf}{\mathsf{r}}
+\newcommand{\ssf}{\mathsf{s}}
+\newcommand{\tsf}{\mathsf{t}}
+\newcommand{\usf}{\mathsf{u}}
+\newcommand{\vsf}{\mathsf{v}}
+\newcommand{\wsf}{\mathsf{w}}
+\newcommand{\xsf}{\mathsf{x}}
+\newcommand{\ysf}{\mathsf{y}}
+\newcommand{\zsf}{\mathsf{z}}
+
+% Bold sans serif letters in math mode
+
+\newcommand{\abs}{\mathsf{a}}
+\newcommand{\bbs}{{\boldsymbol{\mathsf{b}}}}
+\newcommand{\cbs}{{\boldsymbol{\mathsf{c}}}}
+\newcommand{\dbs}{\mathsf{d}}
+\newcommand{\ebs}{{\boldsymbol{\mathsf{e}}}}
+\newcommand{\fbs}{\mathsf{f}}
+\newcommand{\gbs}{\mathsf{g}}
+\newcommand{\hbs}{\mathsf{h}}
+\newcommand{\ibs}{\mathsf{i}}
+\newcommand{\jbs}{\mathsf{j}}
+\newcommand{\kbs}{\mathsf{k}}
+\newcommand{\lbs}{\mathsf{l}}
+\newcommand{\mbs}{\mathsf{m}}
+\newcommand{\nbs}{{\boldsymbol{\mathsf{n}}}}
+\newcommand{\obs}{\mathsf{o}}
+\newcommand{\pbs}{{\boldsymbol{\mathsf{p}}}}
+\newcommand{\qbs}{\mathsf{q}}
+\newcommand{\rbs}{\mathsf{r}}
+\newcommand{\sbs}{\mathsf{s}}
+\newcommand{\tbs}{{\boldsymbol{\mathsf{t}}}}
+\newcommand{\ubs}{{\boldsymbol{\mathsf{u}}}}
+\newcommand{\vbs}{{\boldsymbol{\mathsf{v}}}}
+\newcommand{\wbs}{\mathsf{w}}
+\newcommand{\xbs}{{\boldsymbol{\mathsf{x}}}}
+\newcommand{\ybs}{{\boldsymbol{\mathsf{y}}}}
+\newcommand{\zbs}{\mathsf{z}}
+
+% Calligraphic characters
+% Comment Axel Obermeier: inconsistent - why not \CA etc. for upper case?
+%                         Added below for usage in exercise, so that everything is collected in one place
+%                         Redundant until this is replaced
+
+\providecommand{\Ca}{{\cal A}}
+\providecommand{\Cb}{{\cal B}}
+\providecommand{\Cc}{{\cal C}}
+\providecommand{\Cd}{{\cal D}}
+\providecommand{\Ce}{{\cal E}}
+\providecommand{\Cf}{{\cal F}}
+\providecommand{\Cg}{{\cal G}}
+\providecommand{\Ch}{{\cal H}}
+\providecommand{\Ci}{{\cal I}}
+\providecommand{\Cj}{{\cal J}}
+\providecommand{\Ck}{{\cal K}}
+\providecommand{\Cl}{{\cal L}}
+\providecommand{\Cm}{{\cal M}}
+\providecommand{\Cn}{{\cal N}}
+\providecommand{\Co}{{\cal O}}
+\providecommand{\Cp}{{\cal P}}
+\providecommand{\Cq}{{\cal Q}}
+\providecommand{\Cr}{{\cal R}}
+\providecommand{\Cs}{{\cal S}}
+\providecommand{\Ct}{{\cal T}}
+\providecommand{\Cu}{{\cal U}}
+\providecommand{\Cv}{{\cal V}}
+\providecommand{\Cw}{{\cal W}}
+\providecommand{\Cx}{{\cal X}}
+\providecommand{\Cy}{{\cal Y}}
+\providecommand{\Cz}{{\cal Z}}
+
+\providecommand{\CA}{{\cal A}}
+\providecommand{\CB}{{\cal B}}
+\providecommand{\CC}{{\cal C}}
+\providecommand{\CD}{{\cal D}}
+\providecommand{\CE}{{\cal E}}
+\providecommand{\CF}{{\cal F}}
+\providecommand{\CG}{{\cal G}}
+\providecommand{\CH}{{\cal H}}
+\providecommand{\CI}{{\cal I}}
+\providecommand{\CJ}{{\cal J}}
+\providecommand{\CK}{{\cal K}}
+\providecommand{\CL}{{\cal L}}
+\providecommand{\CM}{{\cal M}}
+\providecommand{\CN}{{\cal N}}
+\providecommand{\CO}{{\cal O}}
+\providecommand{\CP}{{\cal P}}
+\providecommand{\CQ}{{\cal Q}}
+\providecommand{\CR}{{\cal R}}
+\providecommand{\CS}{{\cal S}}
+\providecommand{\CT}{{\cal T}}
+\providecommand{\CU}{{\cal U}}
+\providecommand{\CV}{{\cal V}}
+\providecommand{\CW}{{\cal W}}
+\providecommand{\CX}{{\cal X}}
+\providecommand{\CY}{{\cal Y}}
+\providecommand{\CZ}{{\cal Z}}
+
+% Calligraphic characters bold
+
+\newcommand{\Cav}{\boldsymbol {\cal A}}
+\newcommand{\Cbv}{\boldsymbol {\cal B}}
+\newcommand{\Ccv}{\boldsymbol {\cal C}}
+\newcommand{\Cdv}{\boldsymbol {\cal D}}
+\newcommand{\Cev}{\boldsymbol {\cal E}}
+\newcommand{\Cfv}{\boldsymbol {\cal F}}
+\newcommand{\Cgv}{\boldsymbol {\cal G}}
+\newcommand{\Chv}{\boldsymbol {\cal H}}
+\newcommand{\Civ}{\boldsymbol {\cal I}}
+\newcommand{\Cjv}{\boldsymbol {\cal J}}
+\newcommand{\Ckv}{\boldsymbol {\cal K}}
+\newcommand{\Clv}{\boldsymbol {\cal L}}
+\newcommand{\Cmv}{\boldsymbol {\cal M}}
+\newcommand{\Cnv}{\boldsymbol {\cal N}}
+\newcommand{\Cov}{\boldsymbol {\cal O}}
+\newcommand{\Cpv}{\boldsymbol {\cal P}}
+\newcommand{\Cqv}{\boldsymbol {\cal Q}}
+\newcommand{\Crv}{\boldsymbol {\cal R}}
+\newcommand{\Csv}{\boldsymbol {\cal S}}
+\newcommand{\Ctv}{\boldsymbol {\cal T}}
+\newcommand{\Cuv}{\boldsymbol {\cal U}}
+\newcommand{\Cvv}{\boldsymbol {\cal V}}
+\newcommand{\Cwv}{\boldsymbol {\cal W}}
+\newcommand{\Cxv}{\boldsymbol {\cal X}}
+\newcommand{\Cyv}{\boldsymbol {\cal Y}}
+\newcommand{\Czv}{\boldsymbol {\cal Z}}
+
+% Blackboard bold characters
+
+\providecommand{\bbA}{\mathbb{A}}
+\providecommand{\bbB}{\mathbb{B}}
+\providecommand{\bbC}{\mathbb{C}}
+\providecommand{\bbD}{\mathbb{D}}
+\providecommand{\bbE}{\mathbb{E}}
+\providecommand{\bbF}{\mathbb{F}}
+\providecommand{\bbG}{\mathbb{G}}
+\providecommand{\bbH}{\mathbb{H}}
+\providecommand{\bbI}{\mathbb{I}}
+\providecommand{\bbJ}{\mathbb{J}}
+\providecommand{\bbK}{\mathbb{K}}
+\providecommand{\bbL}{\mathbb{L}}
+\providecommand{\bbM}{\mathbb{M}}
+\providecommand{\bbN}{\mathbb{N}}
+\providecommand{\bbO}{\mathbb{O}}
+\providecommand{\bbP}{\mathbb{P}}
+\providecommand{\bbQ}{\mathbb{Q}}
+\providecommand{\bbR}{\mathbb{R}}
+\providecommand{\bbS}{\mathbb{S}}
+\providecommand{\bbT}{\mathbb{T}}
+\providecommand{\bbU}{\mathbb{U}}
+\providecommand{\bbV}{\mathbb{V}}
+\providecommand{\bbW}{\mathbb{W}}
+\providecommand{\bbX}{\mathbb{X}}
+\providecommand{\bbY}{\mathbb{Y}}
+\providecommand{\bbZ}{\mathbb{Z}}
+
+% Special boldface characters
+\providecommand{\reel}{\bbR}
+\newcommand{\nat}{\bbN}
+\newcommand{\ganz}{\bbZ}
+\providecommand{\comp}{\bbC}
+
+% Euler font ("Fraktur"))
+
+\providecommand{\FA}{\mathfrak{A}}
+\providecommand{\FB}{\mathfrak{B}}
+\providecommand{\FC}{\mathfrak{C}}
+\providecommand{\FD}{\mathfrak{D}}
+\providecommand{\FE}{\mathfrak{E}}
+\providecommand{\FF}{\mathfrak{F}}
+\providecommand{\FG}{\mathfrak{G}}
+\providecommand{\FH}{\mathfrak{H}}
+\providecommand{\FI}{\mathfrak{I}}
+\providecommand{\FJ}{\mathfrak{J}}
+\providecommand{\FK}{\mathfrak{K}}
+\providecommand{\FL}{\mathfrak{L}}
+\providecommand{\FM}{\mathfrak{M}}
+\providecommand{\FN}{\mathfrak{N}}
+\providecommand{\FO}{\mathfrak{O}}
+\providecommand{\FP}{\mathfrak{P}}
+\providecommand{\FQ}{\mathfrak{Q}}
+\providecommand{\FR}{\mathfrak{R}}
+\providecommand{\FS}{\mathfrak{S}}
+\providecommand{\FT}{\mathfrak{T}}
+\providecommand{\FU}{\mathfrak{U}}
+\providecommand{\FV}{\mathfrak{V}}
+\providecommand{\FW}{\mathfrak{W}}
+\providecommand{\FX}{\mathfrak{X}}
+\providecommand{\FY}{\mathfrak{Y}}
+\providecommand{\FZ}{\mathfrak{Z}}
+
+\providecommand{\Fa}{\mathfrak{a}}
+\providecommand{\Fb}{\mathfrak{b}}
+\providecommand{\Fc}{\mathfrak{c}}
+\providecommand{\Fd}{\mathfrak{d}}
+\providecommand{\Fe}{\mathfrak{e}}
+\providecommand{\Ff}{\mathfrak{f}}
+\providecommand{\Fg}{\mathfrak{g}}
+\providecommand{\Fh}{\mathfrak{h}}
+\providecommand{\Fi}{\mathfrak{i}}
+\providecommand{\Fj}{\mathfrak{j}}
+\providecommand{\Fk}{\mathfrak{k}}
+\providecommand{\Fl}{\mathfrak{l}}
+\providecommand{\Fm}{\mathfrak{m}}
+\providecommand{\Fn}{\mathfrak{n}}
+\providecommand{\Fo}{\mathfrak{o}}
+\providecommand{\Fp}{\mathfrak{p}}
+\providecommand{\Fq}{\mathfrak{q}}
+\providecommand{\Fr}{\mathfrak{r}}
+\providecommand{\Fs}{\mathfrak{s}}
+\providecommand{\Ft}{\mathfrak{t}}
+\providecommand{\Fu}{\mathfrak{u}}
+\providecommand{\Fv}{\mathfrak{v}}
+\providecommand{\Fw}{\mathfrak{w}}
+\providecommand{\Fx}{\mathfrak{x}}
+\providecommand{\Fy}{\mathfrak{y}}
+\providecommand{\Fz}{\mathfrak{z}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Macros for convenience
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newcommand*{\textEUSP}[2]{\langle{#1},{#2}\rangle} % Euclidean inner product
+
+\newcommand*{\EUSP}[2]{\left<{#1},{#2}\right>} % Euclidean inner product
+\newcommand*{\DP}[2]{\left<{#1},{#2}\right>} % Duality product
+\newcommand*{\cross}[2]{{#1}\times{#2}}       %Cross product of vectors in R^3
+
+\providecommand*{\wt}[1]{\widetilde{#1}}
+\providecommand*{\wh}[1]{\widehat{#1}}
+\providecommand{\DS}{\displaystyle}
+\newcommand{\dis}{\displaystyle}
+
+% Abstract Norms and inner producrs
+
+\providecommand*{\abs}[1]{\left|{#1}\right|} % Double bar norm
+\providecommand*{\N}[1]{\left\|{#1}\right\|} % Double bar norm
+\providecommand*{\Nnormal}[1]{\|{#1}\|} % Double bar norm
+\providecommand*{\Nbig}[1]{\big\|{#1}\big\|} % Double bar norm
+\providecommand*{\NBig}[1]{\Big\|{#1}\Big\|} % Double bar norm
+\providecommand*{\textN}[1]{\|{#1}\|} % Double bar norm
+
+\newcommand*{\IP}[2]{\left({#1},{#2}\right)} % Bracket inner product, same as \SP
+\providecommand*{\NN}[1]{\N{#1}_{0}}         % Zero norm
+\newcommand*{\SN}[1]{\left|{#1}\right|}      % Single bar norm
+\newcommand*{\textSN}[1]{|{#1}|}      % Single bar norm
+
+\providecommand*{\abs}[1]{\left|{#1}\right|} % absolute value, same as \SN
+\newcommand*{\SP}[2]{\left({#1},{#2}\right)} % Inner product
+\newcommand{\xLinf}[1]{L^{\infty}({#1})}
+\newcommand{\NxLinf}[2]{\left\|{#1}\right\|_{\xLinf{#2}}}
+\newcommand*{\NxLone}[2]{\left\|{#1}\right\|_{L^{1}({#2})}}
+\newcommand*{\NxLtwo}[2]{\left\|{#1}\right\|_{L^{2}({#2})}}
+\newcommand*{\Pol}[1]{\Cp_{#1}}
+\newcommand*{\Spline}[2]{\Cs_{#1,#2}}
+
+% Misc
+\newcommand*{\LRP}[1]{\left(#1\right)}
+\newcommand*{\LRSP}[1]{\left[#1\right]}
+
+% Lebesgue measure
+\newcommand{\DX}{\mathrm{d}\Bx}
+\newcommand{\dS}{\mathrm{d}S}
+\providecommand{\ds}{\mathrm{d}\vec{\Bs}}
+
+% Embeddings
+\newcommand{\compemb}{\overset{c}{\hookrightarrow}} % compact embedding
+\newcommand{\contemb}{\hookrightarrow}              % continuous embedding
+
+% Modifiers
+
+\newcommand*{\mat}[1]{\mathbf{#1}} % matrices
+\newcommand*{\Op}[1]{\mathsf{#1}} % Operators
+\newcommand*{\blf}[1]{\mathsf{#1}} % Bilinear forms
+\newcommand*{\cvec}[1]{\vec{#1}} % Coefficient vector
+\newcommand*{\conj}[1]{\overline{#1}} % complex conjugate
+
+% restriction
+\newcommand*{\rst}[2]{\left.\mathstrut#1\right|_{#2}}
+
+% Default domains and boundaries (can be adjusted !)
+\newcommand{\defaultdomain}{\CX;\rho}
+\newcommand{\defaultboundary}{\partial\defaultdomain}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% SPACES and NORMS
+% First argument (optional) domain
+%                (-> default = \defaultdomain, \defaultboundary)
+% Second argument for norms \Nxxx, \SNxxx gives the function
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% L^p spaces
+
+\providecommand*{\Lp}[2][\defaultdomain]{L^{#2}({#1})}
+\newcommand*{\Lpv}[2][\defaultdomain]{\BL^{#2}({#1})}
+\newcommand*{\NLp}[3][\defaultdomain]{\N{#2}_{\Lp[#1]{#3}}}
+\newcommand*{\NLpv}[3][\defaultdomain]{\N{#2}_{\Lpv[#1]{#3}}}
+
+% Special L^p spaces
+\newcommand*{\Ltwo}[1][\defaultdomain]{\Lp[#1]{2}}
+\newcommand*{\Ltwov}[1][\defaultdomain]{\Lpv[#1]{2}}
+\newcommand*{\NLtwo}[2][\defaultdomain]{\NLp[#1]{#2}{2}}
+\newcommand*{\NLtwov}[2][\defaultdomain]{\NLpv[#1]{#2}{2}}
+\newcommand*{\SPLtwo}[3][\defaultdomain]{\SP{#2}{#3}_{\Ltwo[#1]}}
+\newcommand*{\Linf}[1][\defaultdomain]{L^{\infty}({#1})}
+\newcommand*{\NLinf}[2][\defaultdomain]{\N{#2}_{\Linf[{#1}]}}
+
+% little l^p spaces (for sequencies)
+\newcommand{\defaultseqdomain}{\bbZ}
+\newcommand*{\lp}[2][\defaultseqdomain]{l^{#2}({#1})}
+\newcommand*{\lpv}[2][\defaultseqdomain]{\Bl^{#2}({#1})}
+\newcommand*{\Nlp}[3][\defaultseqdomain]{\N{#2}_{\lp[#1]{#3}}}
+\newcommand*{\Nlpv}[3][\defaultseqdomain]{\N{#2}_{\lpv[#1]{#3}}}
+\newcommand*{\ltwo}[1][\defaultseqdomain]{\lp[#1]{2}}
+\newcommand*{\ltwov}[1][\defaultseqdomain]{\lpv[#1]{2}}
+\newcommand*{\Nltwo}[2][\defaultseqdomain]{\Nlp[#1]{#2}{2}}
+\newcommand*{\Nltwov}[2][\defaultseqdomain]{\Nlpv[#1]{#2}{2}}
+\newcommand*{\linf}[1][\defaultseqdomain]{l^{\infty}({#1})}
+\newcommand*{\Nlinf}[2][\defaultseqdomain]{\N{#2}_{\linf[{#1}]}}
+
+% Sobolev spaces for general L^p spaces
+% first argument (optional) = domain,
+% second argument: differentiation order
+% third argument: underlying L^p space
+% (for norms the second argument provides the function)
+\newcommand*{\Wmp}[3][\defaultdomain]{W^{{#2},{#3}}({#1})}
+\newcommand*{\Wmpv}[3][\defaultdomain]{\BW^{{#2},{#3}}({#1})}
+\newcommand*{\bWmp}[4][\defaultdomain]{W_{#4}^{{#2},{#3}}({#1})}    % boundary values
+\newcommand*{\bWmpv}[4][\defaultdomain]{\BW_{#4}^{{#2},{#3}}({#1})}
+\newcommand*{\zbWmp}[3][\defaultdomain]{\bWmp[#1]{#2}{#3}{0}}       % zero b.v.
+\newcommand*{\zbWmpv}[3][\defaultdomain]{\bWmpv[#1]{#2}{#3}{0}}
+\newcommand*{\NWmp}[4][\defaultdomain]{\N{#2}_{\Wmp[#1]{#3}{#4}}}
+\newcommand*{\NWmpv}[4][\defaultdomain]{\N{#2}_{\Wmpv[#1]{#3}{#4}}}
+\newcommand*{\SNWmp}[4][\defaultdomain]{\SN{#2}_{\Wmp[#1]{#3}{#4}}}
+\newcommand*{\SNWmpv}[4][\defaultdomain]{\SN{#2}_{\Wmp[#1]{#3}{#4}}}
+
+% Sobolev spaces for p=2
+\newcommand*{\Hm}[2][\defaultdomain]{H^{#2}({#1})}
+\newcommand*{\Hmv}[2][\defaultdomain]{\BH^{#2}({#1})}
+\newcommand*{\bHm}[3][\defaultdomain]{H_{#3}^{#2}({#1})}
+\newcommand*{\zbHm}[3][\defaultdomain]{\bHm[#1]{#2}{0}}
+\newcommand*{\bHmv}[3][\defaultdomain]{\BH_{#3}^{#2}({#1})}
+\newcommand*{\zbHmv}[3][\defaultdomain]{\bHmv[#1]{#2}{0}}
+\newcommand*{\NHm}[3][\defaultdomain]{{\N{#2}}_{\Hm[{#1}]{#3}}}
+\newcommand*{\NHmv}[3][\defaultdomain]{{\N{#2}}_{\Hmv[{#1}]{#3}}}
+\newcommand*{\SNHm}[3][\defaultdomain]{{\SN{#2}}_{\Hm[{#1}]{#3}}}
+\newcommand*{\SNHmv}[3][\defaultdomain]{{\SN{#2}}_{\Hmv[{#1}]{#3}}}
+
+% Special Sobolev spaces for p=2
+\newcommand*{\Hone}[1][\defaultdomain]{\Hm[#1]{1}}
+\newcommand*{\Honev}[1][\defaultdomain]{\Hmv[#1]{1}}
+\newcommand*{\bHone}[2][\defaultdomain]{\bHm[#1]{1}{#2}}
+\newcommand*{\bHonev}[2][\defaultdomain]{\bHmv[#1]{1}{#2}}
+\newcommand*{\zbHone}[1][\defaultdomain]{\bHm[#1]{1}{0}}
+\newcommand*{\zbHonev}[1][\defaultdomain]{\bHmv[#1]{1}{0}}
+\newcommand*{\NHone}[2][\defaultdomain]{{\N{#2}}_{\Hone[{#1}]}}
+\newcommand*{\NHonev}[2][\defaultdomain]{{\N{#2}}_{\Honev[{#1}]}}
+\newcommand*{\SNHone}[2][\defaultdomain]{{\SN{#2}}_{\Hone[{#1}]}}
+\newcommand*{\SNHonev}[2][\defaultdomain]{{\SN{#2}}_{\Honev[{#1}]}}
+
+\newcommand{\hlb}{\frac{1}{2}}
+\providecommand*{\Hh}[1][\defaultboundary]{\Hm[#1]{\hlb}}
+\newcommand*{\Hhv}[1][\defaultboundary]{\Hmv[#1]{\hlb}}
+\newcommand*{\NHh}[2][\defaultboundary]{\N{#2}_{\Hh[#1]}}
+\newcommand*{\NHhv}[2][\defaultboundary]{\N{#2}_{\Hhv[#1]}}
+\newcommand*{\SNHh}[2][\defaultboundary]{\SN{#2}_{\Hh[#1]}}
+\newcommand*{\SNHhv}[2][\defaultboundary]{\SN{#2}_{\Hhv[#1]}}
+
+% Hdiv
+\newcommand*{\Hdiv}[1][\defaultdomain]{\boldsymbol{H}(\Div,{#1})}
+\newcommand*{\bHdiv}[2][\defaultdomain]{\boldsymbol{H}_{#2}(\Div,{#1})}
+\newcommand*{\zbHdiv}[1][\defaultdomain]{\bHdiv[#1]{0}}
+\newcommand*{\kHdiv}[1][\defaultdomain]{\boldsymbol{H}(\Div0,{#1})}
+\newcommand*{\bkHdiv}[2][\defaultdomain]{\boldsymbol{H}_{#2}(\Div0,{#1})}
+\newcommand*{\zbkHdiv}[1][\defaultdomain]{\bkHdiv[#1]{0}}
+\newcommand*{\NHdiv}[2][\defaultdomain]{\N{#2}_{\Hdiv[#1]}}
+\newcommand{\Honediv}[1][\defaultdomain]{\boldsymbol{H}^{1}_{0}(\Div0,{#1})}
+
+% Hcurl
+\newcommand*{\Hcurl}[1][\defaultdomain]{\boldsymbol{H}(\curl,{#1})}
+\newcommand*{\bHcurl}[2][\defaultdomain]{\boldsymbol{H}_{#2}(\curl,{#1})}
+\newcommand*{\zbHcurl}[1][\defaultdomain]{\bHcurl[#1]{0}}
+\newcommand*{\kHcurl}[1][\defaultdomain]{\boldsymbol{H}(\curl0,{#1})}
+\newcommand*{\bkHcurl}[2][\defaultdomain]{\boldsymbol{H}_{#2}(\curl0,{#1})}
+\newcommand*{\zbkHcurl}[1][\defaultdomain]{\bkHcurl[#1]{0}}
+\newcommand*{\NHcurl}[2][\defaultdomain]{\N{#2}_{\Hcurl[#1]}}
+
+% Spaces of continuously differentiable functions
+\newcommand*{\Contm}[2][\defaultdomain]{C^{#2}({#1})}
+\newcommand*{\Contmv}[2][\defaultdomain]{\BC^{#2}({#1})}
+\newcommand*{\NContm}[3][\defaultdomain]{\N{#2}_{\Cm[#1]{#3}}}
+\newcommand*{\NContmv}[3][\defaultdomain]{\N{#2}_{\Cmv[#1]{#3}}}
+
+% Bochner spaces for evolution problems
+\newcommand{\period}{]0,T[}
+\newcommand{\cperiod}{]0,T[}
+\newcommand*{\TLtwo}[2][\period]{L^2({#1};{#2})}
+\newcommand*{\TLinf}[2][\period]{L^{\infty}({#1};{#2})}
+\newcommand*{\TCont}[2][\cperiod]{C^{0}({#1};{#2})}
+\newcommand*{\THm}[3][\period]{H^{#2}({#1};{#3})}
+
+% Functions of bounded variation
+\newcommand*{\BdV}[1][\defaultdomain]{BV_{\mathrm{loc}}({#1})}
+
+% Jumps and averages
+
+\newcommand*{\jump}[2][]{\left[{#2}\right]_{#1}}
+\newcommand*{\avg}[2][]{\left\{{#2}\right\}_{#1}}
+
+% partial derivatives
+\newcommand*{\Dp}[2]{\frac{\partial{#1}}{\partial{#2}}}
+\newcommand*{\DDp}[2]{\frac{\partial^2{#1}}{\partial{#2}^2}}
+\newcommand*{\DpDp}[3]{\frac{\partial^2{#1}}{\partial{#2}\partial{#3}}}
+\newcommand*{\dtemp}[1]{\frac{\partial {#1}}{\partial t}}
+\newcommand*{\ddtemp}[1]{\frac{\partial^2 {#1}}{\partial t^2}}
+
+
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: "main"
+%%% End:

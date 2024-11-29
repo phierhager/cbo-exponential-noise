@@ -1,0 +1,456 @@
+\documentclass[a4paper, 11pt]{article}
+\input{preamble.tex}
+\input{Macros.tex}
+\usepackage{bbm}
+\usepackage{arydshln}
+\usepackage{subcaption}
+\usepackage{mdframed}
+\usepackage[table]{xcolor}
+\usepackage{ifdraft}
+
+\usepackage[ruled,linesnumbered]{algorithm2e}
+
+
+\usepackage{tabularx}
+\usepackage{enumitem}
+
+\setlist{nolistsep}
+
+
+\renewcommand{\arraystretch}{1.5}
+
+\newcolumntype{b}{X}
+\newcolumntype{s}{>{\hsize=.3\hsize}X}
+
+
+\definecolor{TUMBlau}{RGB}{0,101,189} % Pantone 300
+\definecolor{TUMBlauDunkel}{RGB}{0,82,147} % Pantone 301
+%\definecolor{TUMBlauDunkel}{RGB}{0,80,146} % 
+\definecolor{TUMBlauHell}{RGB}{152,198,234} % Pantone 283
+\definecolor{TUMBlauMittel}{RGB}{100,160,200} % Pantone 542
+
+    % Hervorhebung:
+\definecolor{TUMElfenbein}{RGB}{218,215,203} % Pantone 7527 -Elfenbein
+\definecolor{TUMGruen}{RGB}{162,173,0} % Pantone 383 - Grün
+\definecolor{TUMOrange}{RGB}{227,114,34} % Pantone 158 - Orange
+\definecolor{TUMGrau}{gray}{0.6} % Grau 60%
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Comments
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newcommand{\comm}[1]{\ifdraft{\marginpar{\tiny{\textcolor{blue}{#1}}}}{\marginpar{\tiny{\textcolor{blue}{#1}}}}}
+\newcommand{\change}[2][{}]{\ifdraft{\comm{#1}\textcolor{red}{#2}}{#2}}
+\newcommand{\hide}[2][{}]{\ifdraft{\comm{#1}}{}}
+\newcommand{\new}[1]{\textcolor{green}{{#1}}}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Specific Commands and Definitions
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% overlining
+%\newcommand{\overbar}[1]{\mkern 1.5mu\overline{\mkern-1.5mu#1\mkern-1.5mu}\mkern 1.5mu}
+\newcommand{\overbar}[1]{\makebox[0pt]{$\phantom{#1}\mkern 1.5mu\overline{\mkern-1.5mu\phantom{#1}\mkern-1.5mu}\mkern 1.5mu$}#1}
+%\renewcommand{\underbar}[1]{\mkern 1.5mu\underline{\mkern-1.5mu#1\mkern-1.5mu}\mkern 1.5mu}
+\renewcommand{\underbar}[1]{\makebox[0pt]{$\phantom{#1}\mkern 1.5mu\underline{\mkern-1.5mu\phantom{#1}\mkern-1.5mu}\mkern 1.5mu$}#1}
+
+
+\newcommand{\divergence}{\textrm{div}}
+\newcommand{\sign}{\textrm{sign}}
+
+\newcommand{\globmin}{x^*}
+\newcommand{\minobj}{\underbar \CE}
+\newcommand{\maxobj}{\overbar \CE}
+
+\newcommand{\cutoff}[1]{H\!\left({#1}\right)}
+\newcommand{\cutoffnoarg}{H}
+
+\newcommand{\omegaa}[0]{\omega_{\alpha}}
+
+\newcommand{\conspoint}[1]{x_{\alpha}({#1})}
+\newcommand{\conspointnoarg}{x_{\alpha}}
+\newcommand{\textconspoint}[1]{x_{\alpha}({#1})}
+
+\newcommand{\empmeasure}[1]{\widehat\rho_{#1}^N}
+
+\newcommand{\indivmeasure}[0]{\varrho} %\widetilde\rho already used
+
+\DeclareMathOperator*{\Law}{Law}
+
+
+
+
+\makeatother
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Title
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\title{\usefont{OT1}{bch}{b}{n}
+	\huge Project Report for\\Consensus-Based Optimization \\ with Exponential Noise
+}
+
+\date{}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Authors
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\author[1,2]{Massimo Fornasier\thanks{Email: \texttt{massimo.fornasier@ma.tum.de}}}
+\author[3]{Philip Hierhager\thanks{Email: \texttt{philip.hierhager@tum.de}}}
+\author[1,2]{Konstantin Riedl\thanks{Email: \texttt{konstantin.riedl@ma.tum.de}}}
+\author[4]{Tim Roith\thanks{Email: \texttt{tim.roith@desy.de}}}
+
+\affil[1]{Technical University of Munich, School of Computation, Information and Technology, Department of Mathematics, Munich, Germany}
+\affil[2]{Munich Center for Machine Learning, Munich, Germany}
+\affil[3]{Technical University of Munich, School of Computation, Information and Technology, Department of Computer Science, Munich, Germany}
+\affil[4]{DESY, Hamburg, Germany}
+
+\renewcommand\Authands{ and }
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Document
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{document}
+\maketitle
+
+\tableofcontents
+\clearpage
+\section{Background and Derivation}
+\subsection{Machine Learning, Neural Networks and Training}
+Machine Learning uses data observations to generalize in the presence of uncertainty. Instead of using fixed basis functions for the introduction of non-linearity, Neural Networks fix the number of basis functions in advance but allow them to be adaptive. To learn its parameters $v$, minimizing an appropriate loss function $\CE_i(v)$ averaged over all data samples $M$ is required. This leads to the optimization problem
+\begin{equation} \label{eq:objective}
+    \globmin := \argmin_{v\in \bbR^d} \CE(v) \quad\text{with}\quad \CE(v) = \frac{1}{M}\sum_{j=1}^M \CE_j(v),
+\end{equation}
+which is referred to as training in machine learning. Unlike algorithms like the support vector machine where the basis functions are fixed, optimization problems of Neural Networks are high-dimensional, non-convex and might lean to being NP-hard in general. Local optimization algorithms like Gradient Descent and in particular its stochastic variants work surprisingly well. They often reach very good (in the sense that they generalize well) local minima compared with the global optimum.
+There are however numerous other global optimization methods that are investigated for the training of neural networks.
+
+
+\subsection{Particle Swarm Optimization (PSO)}
+One of those algorithms is Particle Swarm Optimization (PSO) which was initially introduced by Kennedy and Eberhart \cite{kennedy1995particle}. It solves \eqref{eq:objective} by considering $N$ particles described by triplets $(X^i_{k}, V^i_{k}, P^i_{k})$ with $k$ denoting the iteration number and $i$ the particle number. $X^i_{k}\in\bbR^d$ and $V^i_{k}\in\bbR^d$ describe the position and velocity, and $P^i_{k}\in\bbR^d$ the local best position of particle $i$ at iteration $k$. $G_k\in\bbR^d$ with $G_{k}=\argmin_i \CE(P^i_{k})$ denotes the global best up to iteration $k$. The particle velocity and position are updated according to
+\begin{align}
+    V^i_{k+1} & = V^i_{k} + c_1 r^i_{k} (P^i_{k} - X^i_{k}) + c_2 R^i_{k} (G_{k} - X^i_{k}) \\
+              & = V^i_{k} + \gamma^i_{k} + \eta^i_{k} \nonumber                             \\
+    X^i_{k+1} & = X^i_{k} + V^i_{k} ,                                                       \\
+    \nonumber
+\end{align}
+where
+\begin{align}
+    \gamma^i_{k} & =\frac{c_1}{2} (P^i_{k} - X^i_{k}) + \frac{c_2}{2} (G_{k} - X^i_{k}) \nonumber                               \\
+    \eta^i_{k}   & = \frac{c_1}{2} \tilde r^i_{k} (P^i_{k} - X^i_{k}) + \frac{c_2}{2} \tilde R^i_{k} (G_{k} - X^i_{k})\nonumber
+\end{align}
+with the deterministic contribution $\gamma^i_{k}$ and the stochastic one $\eta^i_{k}$. $c_1$ and $c_2$ are known as acceleration coefficients, $r^i_{k}$ and $R^i_{k}$ are two different random variables distributed uniformly with $U(0,1)$, $\tilde r^i_{k}$ and $\tilde R^i_{k}$ are then distributed uniformly with $U(-\frac{1}{2},\frac{1}{2})$, and the vector $G_{k}$ describes the position of the best particle of the swarm. Every particle is dragged towards its own historical best position and the global best position communicated in the swarm - formalized as a local attractor $p^i_{k}$ the particle converges to
+\begin{equation*}
+    p^i_{k} = \frac{c_1 r^i_{k}P^i_{k} + c_2 R^i_{k} G_{k}}{c_1 r^i_{k} + c_2 R^i_{k}}
+\end{equation*}
+or
+\begin{equation*}
+    p^i_{k} = \psi^i_{k}P^i_{k} + (1-\psi^i_{k})G_{k}, \quad \text{where} \quad \psi^i_{k} = \frac{c_1 r^i_{k}}{c_1 r^i_{k} + c_2 R^i_{k}}
+\end{equation*}
+Often in PSO, $c_1=c_2$ and this equation simplifies to
+\begin{equation}\label{pso:localattractor}
+    p^i_{k} = \psi^i_{k}P^i_{k} + (1-\psi^i_{k})G_{k}, \quad \text{where} \quad \psi^i_{k} \sim U(0,1).
+\end{equation}
+
+
+\subsection{Quantum-Inspired PSO}
+The Quantum-Inspired PSO was first introduced by Sun et al. \cite{sun2004particle} and Yang et al. \cite{yang2004quantum} and was improved in several works since then in e.g. \cite{sun2012quantum} or \cite{flori2022quantum}. The local attractor of particles in PSO can be thought of as a particles in a Newtonian attractor potential field where particle $i$ moves toward the local attractor $p^i_{k}$ with its potential energy declining to zero like a returning satellite orbiting the earth. We can now extend this imagery to the quantum mechanical case where the particles have the same attractor, but are described by quantum-mechanical bound-state equations. We use the Schrödinger equation at an infinitely high potential well\,---\,an often used simple approximation for quantum mechanics in physics
+\begin{align*}
+    i\frac{\partial}{\partial t}\Psi(X,t) & = \hat{H}\Psi(X,t)
+    \\ \text{with} \quad \hat{H}&= -\frac{\hbar}{2m}\nabla^2 + V(\hat{x})
+\end{align*}
+with mass $m$, potential field $V(x)$ and Hamiltonian $\hat{H}$. We start by defining the one-dimensional case and denote the position of the particle as $X$, the attractor as $p$ and the variable $Y=X-p$. With $p$ being the center of an infinitely high potential wall and $L$ its characteristic length, the position of the particle can be described with the quantum-mechanical one-dimensional wave function
+\begin{equation}\label{qpso:wavefunction}
+    \Psi(Y) = \frac{1}{\sqrt{L}}\exp^{-\frac{\lvert Y\rvert}{L}}.
+\end{equation}
+In quantum mechanics, the probability density function of a particle is given by $Q(Y)=\lvert \Psi(Y) \rvert^2$. To sample from this in a quantum mechanical system, we just observe the particle which makes its wave function to collapse to one position.
+By using its cumulative distribution function $F(Y)=1-\exp{(-{\lvert Y\rvert/L})}$ and the Markov Inverse sampling we can also simulate this classically with
+\begin{equation}\label{qpso:markovinverse}
+    Y = \pm \frac{L}{2}\ln{\frac{1}{u}} \quad \text{with} \quad u\sim U(0,1)
+\end{equation}
+which can be straightforwardly extended with the local attractor $p^i_{k}$ and with $X^i_{k}=Y^i_{k}+p^i_{k}$ to the $d$-dimensional update rule of particle $i$ at iteration step $k+1$,
+\begin{equation}\label{qpso:positionupdate}
+    X^i_{k+1} = p^i_{k} \pm \frac{L^i_{k}}{2} \ln{\frac{1}{u^i_{k}}} \quad \text{with} \quad u^i_{k}\sim U(0,1)
+\end{equation}
+The characteristic length of the potential wall $L^i_{k}$ can now either be modelled as
+\begin{equation}\label{qpso:potwalllength}
+    L^i_{k} = 2 \alpha \lvert X^i_{k} - p^i_{k} \rvert
+\end{equation}
+or using the mean best $C_k=\frac{1}{N}\sum_{i=1}^N P^i_{k}$ as
+\begin{equation*}
+    L^i_{k} = 2 \alpha \lvert X^i_{k} - C_k \rvert.
+\end{equation*}
+By iteratively updating the positions of the particles after \eqref{qpso:positionupdate} with the local attractor \eqref{pso:localattractor}, evaluating their fitness scores and updating personal, global and potentially mean best a competitive optimizer for non-convex loss landscapes can be designed.
+
+
+\subsection{Consensus-Based Optimization (CBO)}
+CBO uses a finite number of interacting agents $X^1,\ldots,X^N$ to explore the domain with a drift in the direction of the consensus and a stochastic diffusion term, and to form a global consensus about the minimizer~$\globmin$ as time passes~\cite{carrillo2019consensus,fornasier2020consensus_sphere_convergence,fornasier2021anisotropic,fornasier2021convergence}. In contrast to PSO, CBO is easy enough to be theoretically analyzable on the one hand but sophisticated enough to be competitive in applications on the other~\cite{carrillo2018analytical,fornasier2021consensus}.
+After initializing the system with independent initial data $(X^i_{0}\sim\rho_0)_{i=1,\dots,N}$ for a suitable measure $\rho_0$ (typically a multi-variate normal distribution with certain mean and covariance matrix), the dynamics of each individual particle~$X^{i}$ at time step $k$ can be formally described as follows.
+
+% taken out of 2024_fornasier
+Given a time horizon $T > 0$ and a time discretization $t_0 = 0 < \Delta t < \!\cdots< K \Delta t = T$ of $[0,T]$, we denote the location of agent $i$ at time $k\Delta t$ by $X^i_{k\Delta t}$, $k=0,\ldots,K$. For user-specified parameters
+$\alpha,\lambda,\sigma > 0$, the time-discrete evolution of
+the $i$-th agent is defined by the update rule
+\begin{alignat}{2} \label{cbo:dynamic}
+    \phantom{X_{(k+1)\Delta t}^i - X_{k\Delta t}^i} & \begin{aligned}[c]
+\mathllap{X_{(k+1)\Delta t}^i} = & X_{k\Delta t}^i- \Delta t\lambda\left( X_{k\Delta t}^i - \conspoint{\empmeasure{k\Delta t}}\right)\cutoff{\CE( X_{k\Delta t}^i)-\CE\!\left(\conspoint{\empmeasure{k\Delta t}}\right)} \\
+& + \sigma \N{ X_{k\Delta t}^i-\conspoint{\empmeasure{k\Delta t}}}_2  B_{k\Delta t}^i,\\
+\end{aligned} \\
+    \mathllap{X_0^i}& \sim \rho_0 \quad \text{for all } i =1,\ldots,N, \label{qcbo:initial}
+\end{alignat}
+where $(( B_{k\Delta t}^i)_{k=0,\ldots,K-1})_{i=1,\ldots,N}$ are independent, identically distributed Gaussian random vectors in $\bbR^d$ with zero mean and covariance matrix $\Delta t \Id_d$~\cite{fornasier2021consensus}.
+% At the $n$th iteration the position of the $i$th agent is updated according to the formula
+% \begin{equation}
+%     X^i_{ n+1}
+%     = X^i_{ n}
+%     - \Delta t\lambda \big( X^i_{k} - v_{\alpha,n}\big)
+%     + \sigma \gamma B^i_{k}
+% \end{equation}
+
+% where $(( B^i_{k})_{n=0,\ldots,N-1})_{i=1,\ldots,M}$ are independent, identically distributed Gaussian random vectors in $\bbR^d$ with zero mean and covariance matrix $\Id_d$.
+The dynamics~\eqref{cbo:dynamic} of each particle is governed by two competing terms. Firstly, a drift term
+\begin{equation} \label{cbo:drift}
+    \Delta t\lambda\left( X_{k\Delta t}^i - \conspoint{\empmeasure{k\Delta t}}\right)\cutoff{\CE( X_{k\Delta t}^i)-\CE\!\left(\conspoint{\empmeasure{k\Delta t}}\right)}
+\end{equation} drags the respective agent towards a momentaneous consensus point~$\conspoint{\empmeasure{k\Delta t}}$, which is computed as a weighted average of the agents' positions given by
+\begin{align} \label{eq:momentaneous_consensus}
+    \conspoint{\empmeasure{k\Delta t}} := \sum_{i=1}^N X^i_{k\Delta t} \frac{\omegaa(X^i_{k\Delta t})}{\sum_{j=1}^N \omegaa(X_{k\Delta t}^i)},\quad \textrm{with}\quad \omegaa(x) := \exp(-\alpha \CE(x)).
+\end{align}
+It serves as a guess for the global minimizer and is motivated by the fact that $$\conspoint{\empmeasure{k\Delta t}}\approx X^g_{k\Delta t} \quad \textrm{with} \quad g = \argmin_{i=1,\dots,N} \CE(X^i_{k})\quad \textrm{for} \quad  \alpha\gg1, $$ i.e., $\conspoint{\empmeasure{k\Delta t}}$ is close to the current best position among the particles.
+Thus it ensures that the particles are approximately moving into the correct direction, namely the direction of the minimizer~$\globmin$.
+The univariate function \mbox{$\cutoffnoarg : \bbR\rightarrow [0,1]$} is often taken to be $\cutoffnoarg \equiv 1$, but can be also used to deactivate the drift term for agents whose objective is better than the momentanous consensus, so $\cutoff{x} \approx \mathbbm{1}_{x \geq 0}$ with $x := \CE(X_t^i) < \CE(\textconspoint{\empmeasure{t}})$. For the development of the CBO algorithm with exponential noise we will assume $\cutoffnoarg \equiv 1$.
+Secondly, a diffusion term, given by
+\begin{equation} \label{cbo:diffusion}
+    \sigma \N{ X_{k\Delta t}^i-\conspoint{\empmeasure{k\Delta t}}}_2  B_{k\Delta t}^i
+\end{equation}
+randomly moves particles to feature the exploration of the energy landscape of the objective function~$\CE$. The further away the particles are from the common consensus $\conspoint{\empmeasure{k\Delta t}}$, the greater the noise scaling factor $\N{ X_{k\Delta t}^i-\conspoint{\empmeasure{k\Delta t}}}_2$.
+
+Ideally, through the drift-diffusion mechanism of the CBO the agents reach a near optimal global consensus, so that the associated empirical measure
+\begin{align} \label{eq:empirical_measure}
+    \empmeasure{t} := \frac{1}{N} \sum_{i=1}^{N} \delta_{X_t^i}
+\end{align}
+converges to a Dirac delta $\delta_{\widetilde v}$ at some $\widetilde v \in \bbR^d$ close to $\globmin$.
+
+
+\subsection{CBO with exponential noise}
+Like Particle Swarm Optimization is changed by using inspiration from quantum mechanics, this document describes how to extend consensus-based optimization being inspired by quantum mechanics. In equation \eqref{qpso:potwalllength}, the local attraction point of the particle swarm algorithm is used to determine the length of the imagined potential wall and therefore the strength of the noise for every particle as described in equations \eqref{qpso:markovinverse} and \eqref{qpso:positionupdate}.
+The noise is then added to the local attraction point to create a quantum-inspired version of the Particle Swarm optimization. 
+For the Consensus-based optimization we take the same approach. We use the attraction point that is given by equation \eqref{eq:momentaneous_consensus} and employ a quantum-mechanical bound state as in equation \eqref{qpso:wavefunction} using this new point. The stochastic dependency of CBO to the distance can be integrated then via the modelling of the characteristic length of the well. Furthermore, as the attraction point is now identical for all particles, a convex combination of the particle position and the actual quantum-inspired term is taken.
+
+This leads to
+\begin{align}
+    X^i_{(k+1)\Delta t} & = (1-\beta) X^i_{k\Delta t} + \beta \left(\conspoint{\empmeasure{k\Delta t}} \pm \frac{L^i_{k\Delta t}}{2} \ln{\frac{1}{u^i_{k\Delta t}}} \right) \nonumber                                                                   \\
+                        & = X^i_{k\Delta t} - \beta (X^i_{k\Delta t} - \conspoint{\empmeasure{k\Delta t}}) + \frac{\beta}{2} L^i_{k\Delta t} \left(\pm\ln{\frac{1}{u^i_{k\Delta t}}}\right)  \nonumber                                                  \\
+                        & = X^i_{k\Delta t} - {\lambda\Delta t} \left(X^i_{k\Delta t} - \conspoint{\empmeasure{k\Delta t}}\right) + \sigma_{\Delta t} \N{ X_{k\Delta t}^i-\conspoint{\empmeasure{k\Delta t}}}_2 \hat B_{k\Delta t}^i\label{qcbo:update} \\
+    \textrm{with}                      \nonumber                                                                                                                                                                                                        \\
+                        & B_{k\Delta t}^i = (\pm\ln{\frac{1}{u^i_{k\Delta t}}}) \quad \textrm{with} \quad u^i_{k\Delta t}\sim U(0,1) \label{qcbo:random}                                                                                                \\
+                        & \conspoint{\empmeasure{k\Delta t}} := \sum_{i=1}^N X^i_{k\Delta t} \frac{\omegaa(X^i_{k\Delta t})}{\sum_{j=1}^N \omegaa(X^j_{k\Delta t})},\quad \textrm{with}\quad \omegaa(x) := \exp(-\alpha \CE(x)) \label{qcbo:attractor}    \\
+                        & \sigma_{\Delta t} = \sigma\sqrt{\Delta t} \label{qcbo:sigma}                                                                                                                                                                  \\
+                        & L^i_{k\Delta t} = \N{ X_{k\Delta t}^i-\conspoint{\empmeasure{k\Delta t}}}_2 \label{qcbo:length}                                                                                                                               \\
+                        & \alpha, \lambda, \sigma \geq 0     \quad \textrm{and } \quad  \beta \in (0,1)         \nonumber
+\end{align}
+with which we hope to minimize $\N{\conspoint{\empmeasure{K\Delta t}}-\globmin}_2$.
+As in standard CBO, the dynamics~\eqref{qcbo:update} of each particle is governed by two competing terms.
+Firstly, a drift term
+\begin{equation}
+    {\lambda\Delta t} (X^i_{k\Delta t} - \conspoint{\empmeasure{k\Delta t}})
+\end{equation}
+drags the respective agent towards a momentaneous consensus point~$\conspoint{\empmeasure{k\Delta t}}$. This is as in the original CBO method.
+Secondly, a diffusion term, given by
+\begin{equation}
+    \sigma \N{ X_{k\Delta t}^i-\conspoint{\empmeasure{k\Delta t}}}_2 \hat B_{k\Delta t}^i
+\end{equation}
+again randomly moves the particles to explore the energy landscape of the objective function~$\CE$. Compared to the standard CBO and its diffusion term \eqref{cbo:diffusion}, the CBO variant proposed herewith employs not a Gaussian but an exponential noise distribution $\hat B_{k\Delta t}^i$ in equation \eqref{qcbo:random} with more stochastic mass on its tails leading to greater exploration, but less exploitation capabilities as can be seen in Figure~\ref{fig:ccc}\label{gaussexp})
+
+\begin{figure}[!ht]
+\centering
+\includegraphics[width=1\textwidth]{imgs/exponential_gaussian_dist.png}
+\caption{Comparison of the Gaussian and exponential distribution. The exponential function has a heavier tail and therefore greater exploration capability. The Gaussian function has greater exploitation capability as more probability mass is located around the mean.} \vspace{-1em}
+\label{fig:ccc}
+\end{figure}
+Through the specific modelling of the characteristic length $L^i_{k\Delta t}$ in equation \eqref{qcbo:length} we achieve the same scaling as in the standard CBO.
+
+The update rule \eqref{qcbo:update} together with exponential noise leads us to the following algorithm:
+
+\begin{algorithm}[H]
+    \caption{Consensus-based Optimization Algorithm with Exponential Noise}
+    \SetAlgoLined
+    \KwIn{Population size $N$, time steps $K$, time step length $\Delta t$, consensus weight $\alpha$, exploration parameter $\sigma$}
+    \KwOut{Near optimal solution}
+    Initialize particles $X^i_0$ randomly with a Gaussian distribution \eqref{qcbo:initial}\;
+    \For{$k \gets 1$ \KwTo $K-1$}{
+    \For{particle $i$}{
+    Evaluate fitness $\CE(X^i_{k\Delta t})$ of each particle\;
+    Calculate the attractor $\conspoint{\empmeasure{k\Delta t}}$ with \eqref{qcbo:attractor}\;
+    Update position $X^i_{(k+1)\Delta t}$ with \eqref{qcbo:update}\;
+    }
+    }
+    Evaluate fitness $\CE(X^i_{K\Delta t})$ of each particle\;
+    Output best solution\;
+\end{algorithm}
+
+\section{Integration into CBXpy and runner implementation}
+The CBO algorithm with exponential noise is integrated into CBXpy by writing a custom noise sampler that can then be used in several Particle Dynamics tasks like CBO, but for example Consensus-based Sampling, PolarCBO, and others.
+The custom noise sampler is an exponential sampler with a random sign assigned to the output.
+
+Code snippets of the integration can be found in Figure \ref{fig:noise} showing the implemented code. \\
+To run large-scale experiments, we also implemented an experiment runner suite and visualizations. Several code snippets of this runner can be found in Figures~\ref{fig:runner1}, \ref{fig:runner2}, \ref{fig:runner3}. In Figure \ref{fig:result} a key code snippet for the loading of the results is depicted and in Figure \ref{fig:visualize} one of the many visualization functions is depicted - here for heatmaps in subplots.
+
+
+\begin{figure}[!ht]
+\centering
+\subcaptionbox{\footnotesize\label{fig:noise1} The implementation of the exponential noise sampler using numpy.}{\includegraphics[width=0.45\textwidth]{imgs/noise_numpy}}
+\hspace{3em}
+\subcaptionbox{\footnotesize\label{fig:noise2} The implementation of the exponential noise sampler using torch.}{\includegraphics[width=0.45\textwidth]{imgs/noise_torch}}
+\caption{The sampler can be used to create a isotropic, anisotropic or covariance noise that behave differently in each dimension. Those noises can then be used to created different versions of all the particle dynamics algorithms like CBO, CBS, PolarCBO.} \vspace{-1em}
+\label{fig:noise}
+\end{figure}
+
+\section{Numerical Experiments}
+In this section, we present numerical experiments to compare the performance of the CBO algorithm with exponential noise with the standard CBO algorithm (with Gaussian noise).
+To run large-scale experiments, an experiment runner was written which hyperparameter settings could be set by using .yaml files. It automatically saves the results into an .csv file, that can then be used by various visualization functions to draw information from the results.
+In the experiments, mainly the optimization of the Rastrigin function is considered. Its parameter space is thoroughly tested to compare the CBO with Gaussian and exponential noise. The Rastrigin function is a non-convex function with many local minima and a global minimum at the origin. We compare the performance of the CBO algorithm with exponential noise and Gaussian noise in terms of the convergence rate and the quality of the solutions found. The success factor is defined as the percentage of runs in which the algorithm finds a function value below the second best minima.
+
+\subsection{Mean-Field behaviour}
+The first question that arises is how the algorithm behaves in the mean-field limit. Fornasier, Klock and Riedl explored in their paper "Convergence of Anisotropic Consensus-Based
+Optimization in Mean-Field Law" the convergence of the CBO method and found an exponential convergence in the mean-field. This rate is independent of the dimensionality of the problem. The result for the CBO with Gaussian noise could be confirmed with own experiments and can be seen in Figure \ref{fig:meanfield}.
+For CBO with exponential noise we take the same parameters and try to find a similar correlation. As it turns out, even with exponential noise, the mean-field convergence stays on its exponential trend with almost the same convergence rate of $\exp(-0.94(2\lambda-\sigma^2) t)$. 
+% ((MAYBE: ?? Still not sure: This can be explained by the central limit theorem. It states that the distribution will tend toward a Gaussian distribution always as the number of variables (what are the variables here?) increases, regardless of the original distribution, provided the original distributions have finite mean and variance.))
+
+\begin{figure}[!ht]
+\centering
+\subcaptionbox{\footnotesize\label{fig:cbo_meanfield} The mean-field behaviour of CBO with Gaussian noise.}{\includegraphics[height=4.6cm, width=0.4\textwidth]{imgs/cbo_meanfield_anisotropic}}
+\hspace{3em}
+\subcaptionbox{\footnotesize\label{fig:qcbo_meanfield} The mean-field behaviour of CBO with exponential noise.}{\includegraphics[height=4.6cm, width=0.4\textwidth]{imgs/qcbo_meanfield_anisotropic}}
+
+\caption{A depiction of the mean-field behaviours of CBO with Gaussian and exponential anisotropic noise. For the Rastrigin function~$\CE(v)\!=\!\sum_{k=1}^d \!v_k^2\!+\!\frac{5}{2}(1\!-\!\cos(2\pi v_k))$ with~$\globmin \!=\! 0$ and several local minima, we evolve the discretized system of isotropic and anisotropic CBO using $N = 10000$ particles, discrete time step size~$\Delta t = 0.01$ and \mbox{$\alpha = 10^{15}$}, $\lambda = 1$, and $\sigma = 0.32$ for different dimensions~$d\in\{2,3,4,5,6\}$.
+We observe in both cases that the convergence rate of the energy functional~$\CV(\empmeasure{t})$ is independent from $d$ and lies at around $(2\lambda-\sigma^2)$. However, the {\color{red}guess her sth is missing}} \vspace{-1em}
+\label{fig:meanfield}
+\end{figure}
+
+
+% How does QCBO and CBO behave in the mean-field?
+% SUMMARY 8
+% Wie in Email von Konstantin also verschiedene Sigmas 
+% und dimensionen
+
+\subsection{Hyperparameter Performance with different Dimensionality}
+To thoroughly study the hyperparameter settings and differences for CBO with Gaussian and exponential noise several experiments with different lambda and sigma values are created. This subsection should give an insight into how success probability depends on their relationship of the method with different dimensions of the objective function. As you can see in the Figure \ref{fig:d_sigma_lambda}, both CBO with Gaussian and exponential noise become very sensitive to the hyperparameter setting. It can be seen that CBO with exponential noise needs a not as high sigma as the CBO with Gaussian noise. That was as expected, as the exponential noise has more probability mass on its tails leading to greater exploration capabilities of the CBO algorithm.
+
+\begin{figure}[!ht]
+\centering
+\includegraphics[width=1\textwidth]{imgs/d_sigma_lambda.png}
+
+\caption{A demonstration of the increased sensitivity of hyperparameter settings with increased dimensionality. On the left side the CBO is depicted, on the right side the QCBO. Both are evaluated with $d=5,10,15,20,25,30$.} \vspace{-1em}
+\label{fig:d_sigma_lambda}
+\end{figure}
+
+% The tightening of the feasible hyperparameter space in the QCBO and CBO method. They have different convergent hyperparameters
+% SUMMARY 8
+
+\subsection{Hyperparameter Performance with different Alpha values}
+In this subsection the influence of the alpha values is investigated. The alpha value controls the weight of the consensus point in the CBO algorithm with exponential noise. It does not impact the hyperparameter sensitivity of neither the CBO with Gaussian noise nor the CBO with exponential noise as the Figure \ref{fig:alpha_sigma_lambda} shows. 
+
+\begin{figure}[!ht]
+\centering
+\includegraphics[width=1\textwidth]{imgs/alpha_sigma_lambda.jpg}
+
+\caption{The Figure captures the differences in the success probability with different hyperparameter settings of $\lambda$ and $\sigma$ observed at different values of $\alpha$. Both dynamics are evaluated at $alpha = 100, 10000$.} \vspace{-1em}
+\label{fig:alpha_sigma_lambda}
+\end{figure}
+
+% Not so much difference here. Neither in QCBO or CBO.
+% SUMMARY 8
+% Alpha is the parameter that controls the weight of the consensus point in the CBO algorithm with exponential noise. We investigate the effect of different alpha values on the performance of the CBO algorithm with exponential noise.
+
+\subsection{Hyperparameter Performance with different number of particles}
+Another experiment that has been conducted is to map the relationship between the the number of particles, sigma and lambda. Plotting sigma on the x-axis and the number of particles on the y-axis, we recognize a probability distribution with quadratic contour arises when using the CBO with exponential noise. This probability distribution is then linearly shifted along the x-axis with changing lambda values. The same happens with the CBO with Gaussian noise - even if the distribution contours seem far broader than the CBO exponential one. This can be seen in Figure \ref{fig:cbo_n_sigma_lambda} for CBO with Gaussian noise and in Figure \ref{fig:qcbo_n_sigma_lambda} for CBO with exponential noise. The more narrow probability distribution than the CBO with Gaussian noise indicates a higher sensitivity to hyperparameters.
+
+\begin{figure}[!ht]
+\centering
+\includegraphics[width=1\textwidth]{imgs/cbo_n_sigma_lambda.png}
+
+\caption{CBO with Gaussian noise: It is apparent that the higher the sigma and the higher the lambda, the higher the success probability} \vspace{-1em}
+\label{fig:cbo_n_sigma_lambda}
+\end{figure}
+\begin{figure}[!ht]
+\centering
+\includegraphics[width=1\textwidth]{imgs/qcbo_n_sigma_lambda.png}
+
+\caption{For CBO with exponential noise, we see a higher sensitivity to the hyperparameter settings than in the CBO with Gaussian noise.} \vspace{-1em}
+\label{fig:qcbo_n_sigma_lambda}
+\end{figure}
+
+
+% As there is a relationship between the number of particles, lambda and sigma that 
+% 3D plots show a linear correlation between the maximum/probability distribution in the sigma N plot with the lambda value chosen.
+% SUMMARY 6
+
+\subsection{Real-world Machine Learning Applications}
+We see that CBO and QCBO behave fairly similar when optimizing the machine learning landscape of a neural network with one hidden layer for the MNIST dataset. The model used is a multi-layer perceptron with a hidden layer of 100 neurons, 1D batch normalization, and cross entropy loss. The experiment shows that the heavy-tailed noise does not have much influence on the exploitation capability needed in neural network optimization. The diagram showing the accuracy over epochs can be seen in Figure \ref{fig:mnist}. 
+
+\begin{figure}[!ht]
+\centering
+\includegraphics[width=1\textwidth]{imgs/mnist.png}
+
+\caption{It can be observed that CBO with exponential noise works similar on a neural network optimization as the one with Gaussian noise. For both, the same parameters were used: $\alpha = 50.0$, $\Delta t = 0.1$, $\sigma = 0.1$, $\lambda = 1.0$, $max\_it = 200$} \vspace{-1em}
+\label{fig:mnist}
+\end{figure}
+
+\section{Interpretation and Discussion}
+Integrating exponential noise into the CBO algorithm has shown similar results as the CBO algorithm with Gaussian noise. Our tests show that CBO with exponential noise maintains almost the same strong convergence rate as with Gaussian noise in the mean-field limit. This suggests that using exponential noise does not affect the ability of the algorithm to converge. 
+One of the key takeaways is that CBO with exponential noise has similar behaviour during the optimization process. Even though the hyperparameter settings are naturally different, Gaussian and exponential noise sigma and lambda interactions take the same forms across different number of dimensions and alpha values.
+% requires a smaller sigma value compared to Gaussian noise, meaning it can explore the solution space more efficiently while using less noise. This could be useful in high-dimensional problems where the balance between exploration and exploitation is important.
+
+In practical applications, such as optimizing neural networks, both noise models performed similarly. It shows that exponential noise does not hinder the algorithm’s ability to exploit promising solutions but improves exploration without sacrificing accuracy.
+
+In the future, it would be interesting to explore how exponential noise performs in more complex optimization problems and across different machine learning models.
+
+\clearpage
+
+\bibliographystyle{abbrv}
+\bibliography{biblio.bib}
+
+\clearpage
+\section*{Additional Figures}
+\begin{figure}[!ht]
+\centering
+\includegraphics[width=1\textwidth]{imgs/runner1.png}
+\caption{The runner class initializes large-scale experiments for by loading an ExperimentConfig that was obtained from .yaml files. The function $run\_experiment$ is responsible for running all the different configurations and saving it as a ExperimentResult.} \vspace{-1em}
+\label{fig:runner1}
+\end{figure}
+
+\begin{figure}[!ht]
+\centering
+\includegraphics[width=1\textwidth]{imgs/runner2.png}
+\caption{The $run\_dynamic\_configs$ function runs all configurations and before includes the second-best minima objective energy values.} \vspace{-1em}
+\label{fig:runner2}
+\end{figure}
+
+\begin{figure}[!ht]
+\centering
+\includegraphics[width=1\textwidth]{imgs/runner3.png}
+\caption{The $run\_dynamic\_config$ runs one configuration and gives out the result.} \vspace{-1em}
+\label{fig:runner3}
+\end{figure}
+
+\begin{figure}[!ht]
+\centering
+\includegraphics[width=1\textwidth]{imgs/result.png}
+\caption{This class is responsible for saving and loading results.} \vspace{-1em}
+\label{fig:result}
+\end{figure}
+
+\begin{figure}[!ht]
+\centering
+\includegraphics[width=1\textwidth]{imgs/visualize.png}
+\caption{This function generates heatmaps in a subplot.} \vspace{-1em}
+\label{fig:visualize}
+\end{figure}
+
+\begin{figure}[!ht]
+\centering
+\includegraphics[width=1\textwidth]{imgs/experimentgeneration.png}
+\caption{Those two functions are the main responsible ones for converting a .yaml file into a generator of experiment configurations.} \vspace{-1em}
+\label{fig:experimentgeneration}
+\end{figure}
+
+\end{document}

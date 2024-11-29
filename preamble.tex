@@ -1,0 +1,56 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%						Packages					%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage{latexsym,amsfonts, amsmath, amssymb, amsthm}
+% \usepackage{mathpazo}
+\usepackage[utf8]{inputenc}
+\usepackage[final=true,protrusion=true,expansion=true]{microtype}
+\usepackage[noadjust]{cite}
+\usepackage{enumitem}
+\usepackage{color}
+\usepackage{mathtools}
+
+% Table
+\usepackage{booktabs}
+\usepackage{multirow}
+
+\usepackage{subcaption}
+\usepackage[font=scriptsize,labelfont=bf]{caption}
+\usepackage[affil-it]{authblk}
+
+%
+% Margins
+\usepackage{geometry}
+\geometry{
+a4paper,
+total={160mm,247mm},
+left=22mm,
+right=22mm,
+top=20mm,
+}
+
+% Href
+\usepackage{hyperref}
+\hypersetup{
+	final,
+    colorlinks=true,
+    linkcolor=blue,
+    filecolor=magenta,
+    urlcolor=cyan,
+}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%					Theorem Styles					%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\theoremstyle{plain}
+\newtheorem{theorem}{Theorem}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{claim}[theorem]{Claim}
+\newtheorem{problem}{Problem}
+
+\theoremstyle{plain}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{example}[theorem]{Example}
+\newtheorem{remark}[theorem]{Remark}

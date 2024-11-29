@@ -1,0 +1,14 @@
+# ignore all files of latex
+
+*.aux
+*.bbl
+*.blg
+*.log
+*.out
+*.toc
+*.synctex.gz
+*.fdb_latexmk
+*.fls
+*.gz
+*.dvi
+*.xdv
